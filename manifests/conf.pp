@@ -42,7 +42,7 @@ define sudo::conf(
   $priority = 10,
   $content = undef,
   $source = undef,
-  $sudo_config_dir = $sudo::params::config_dir
+  $sudo_config_dir = undef
 ) {
 
   include sudo
@@ -55,9 +55,15 @@ define sudo::conf(
     $content_real = undef
   }
 
+  if $sudo_config_dir != undef {
+    $sudo_config_dir_real = $sudo_config_dir
+  } else {
+    $sudo_config_dir_real = $sudo::params::config_dir
+  }
+
   file { "${priority}_${name}":
     ensure  => $ensure,
-    path    => "${sudo_config_dir}${priority}_${name}",
+    path    => "${sudo_config_dir_real}${priority}_${name}",
     owner   => 'root',
     group   => $sudo::params::config_file_group,
     mode    => '0440',
